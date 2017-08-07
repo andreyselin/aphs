@@ -1,0 +1,112 @@
+html, body {
+    width:100%;
+    height:100%;
+    margin:0;
+    font-size: 14px;
+}
+
+.app {
+    width:100%;
+    height:100%;
+}
+
+
+.body {
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+}
+
+.menu {
+    width:100%;
+    height:50px;
+    background:#f5f5f5;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding:10px 15px;
+}
+button{
+    font-size:1rem;
+}
+.menu button {
+    margin-right:10px;
+}
+
+
+
+    /*----------*/
+    /*   MAIN   */
+    /*----------*/
+
+
+
+.main {
+    flex-grow: 2;
+    position: relative;
+    display: flex;
+}
+
+
+.board {
+    width:100%;
+    overflow: hidden;
+    position: relative;
+}
+.board_block {
+    position: absolute;
+    background: #f5f5f5;
+}
+
+.board_block_title {
+    padding: 3px 5px;
+}
+.board_block_textarea {
+    border:1px solid #f5f5f5;
+    line-height: 16px;
+    font-family: monospace;
+    font-size: 12px;
+}
+
+
+    /*-----------*/
+    /*  Dialogs  */
+    /*-----------*/
+
+
+.dialog {
+    position: absolute;
+    z-index: 10;
+    border: 1px solid silver;
+    background: #fff;
+    padding: 4px;
+    left: 20px;
+    top: 20px;
+}
+.dialog_close-button {
+    position:absolute;
+    top:0;
+    right:0;
+    cursor: pointer;
+    width:30px;
+    height:30px;
+    line-height: 30px;
+    text-align: center;
+}
+.dialog_title {
+    padding:8px 70px 8px 10px;
+}
+
+.dialog_body {
+
+}
+.dialog-list_item {
+    cursor: pointer;
+    box-sizing: border-box;
+    border: 1px silver solid;
+    padding:8px 10px;
+}
+.dialog-list_item:hover {
+    background: silver;
+}

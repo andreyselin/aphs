@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>Aphs editor</title>
+        <link href="style.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <div class="app" ng-app="app">
+            <div class="body" ng-controller="bodyController">
+                <div class="menu">
+                    <button class="__link">Create context</button>
+                    <button class="__link" ng-click="showContextsList()">Open context</button>
+                    <button class="__link" ng-if="data.context !== null">Save context</button>
+                </div>
+                <div class="main">
+                    <div class="dialog" ng-if="show.contextsList">
+                        <div class="dialog_close-button" ng-click="show.contextsList = false">X</div>
+                        <div class="dialog_title">List of your contexts</div>
+                        <div class="dialog_body">
+                            <div class="dialog-list_item" ng-repeat="context in data.contextsList" ng-bind="context.name" ng-click="openContext(context.name)"></div>
+                        </div>
+                    </div>
+                    <div class="board">
+                        <board-block ng-repeat="block in data.context.blocks" data="block" content="data.context.contents[block.name]"></board-block>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

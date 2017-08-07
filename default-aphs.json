@@ -1,0 +1,13 @@
+{
+  "contexts":[
+    {
+      "name": "default",
+      "title": "Default context",
+      "content": {
+        "blocks":[],
+        "connections":[]
+      }
+    }
+  ],
+  "blocks": []
+}

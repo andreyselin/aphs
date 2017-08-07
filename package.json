@@ -1,0 +1,30 @@
+{
+  "name": "aphs",
+  "version": "0.0.1",
+  "description": "Graphs for application developers",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andreiselin/aphs.git"
+  },
+  "keywords": [
+    "graphs",
+    "mind",
+    "maps",
+    "block",
+    "schemes"
+  ],
+  "author": "Andrei Selin, Stepan Omelchenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andreiselin/aphs/issues"
+  },
+  "homepage": "https://github.com/andreiselin/aphs#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "fs-extra": "^4.0.1"
+  }
+}
