@@ -56,17 +56,32 @@ button{
 }
 .board_block {
     position: absolute;
-    background: #f5f5f5;
 }
 
 .board_block_title {
+    position:absolute;
+    height:20px;
+    top:-20px;
     padding: 3px 5px;
 }
 .board_block_textarea {
     border:1px solid #f5f5f5;
+    padding:3px 4px;
     line-height: 16px;
     font-family: monospace;
     font-size: 12px;
+    resize: none;
+    background: transparent;
+}
+.board_connection {
+    cursor: pointer;
+    position: absolute;
+    height:4px;
+    background: silver;
+    border-radius: 3px;
+}
+.board_connection:hover {
+    background: gray;
 }
 
 

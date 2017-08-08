@@ -9,9 +9,9 @@
         <div class="app" ng-app="app">
             <div class="body" ng-controller="bodyController">
                 <div class="menu">
-                    <button class="__link">Create context</button>
+                    <!--<button class="__link">Create context</button>-->
                     <button class="__link" ng-click="showContextsList()">Open context</button>
-                    <button class="__link" ng-if="data.context !== null">Save context</button>
+                    <!--<button class="__link" ng-if="data.context !== null">Save context</button>-->
                 </div>
                 <div class="main">
                     <div class="dialog" ng-if="show.contextsList">
@@ -21,10 +21,11 @@
                             <div class="dialog-list_item" ng-repeat="context in data.contextsList" ng-bind="context.name" ng-click="openContext(context.name)"></div>
                         </div>
                     </div>
+                    <connection-dialog></connection-dialog>
                     <div class="board">
-                        <board-block ng-repeat="block in data.context.blocks" data="block" content="data.context.contents[block.name]"></board-block>
+                        <board-block ng-repeat="(key, block) in data.context.blocks" key="key" data="block" content="data.context.contents[block.name]"></board-block>
+                        <board-connection ng-repeat="connection in data.context.connections" data="connection" from="data.context.blocks[connection.from.block]" to="data.context.blocks[connection.to.block]"></board-connection>
                     </div>
-
                 </div>
             </div>
         </div>
