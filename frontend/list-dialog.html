@@ -1,0 +1,7 @@
+<div class="dialog" ng-if="list">
+    <div class="dialog_close-button" ng-click="hideDialog()">X</div>
+    <div class="dialog_title">List of your contexts</div>
+    <div class="dialog_body">
+        <div class="dialog-list_item" ng-repeat="context in list" ng-bind="context.name" ng-click="openContext(context.name)"></div>
+    </div>
+</div>

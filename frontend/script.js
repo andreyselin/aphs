@@ -3,70 +3,124 @@ var app = angular.module("app",[]);
 
 
 
-app.controller("bodyController",["$scope", "context", function($scope, context){
+app.controller("bodyController",["$scope", "context", "$rootScope", function($scope, context, $rootScope){
 
-    function calculateConnections (input){
 
+    // This should be moved to particular menu controller
+    $scope.showContextsList = function(){
+        $rootScope.$broadcast("dialogs.list.show");
+    };
+
+    $scope.$on("context.show", function(event){
+        $scope.context = context;
+    })
+
+    $scope.saveContext = function() {
+        context.act.save();
     }
 
-    $scope.show = {
-        contextsList: false,
-        board: false
-    };
-
-    $scope.data = {
-        contextsList: [],
-        context: null
-    };
-
-    $scope.showContextsList = function(){
-        context.list().then(function(res){
-            $scope.show.contextsList = true;
-            $scope.data.contextsList = res.data.contexts;
-        });
-    };
-
-    $scope.openContext = function(contextName){
-        context.get(contextName).then(function(res){
-            $scope.show.contextsList = false;
-            $scope.data.context = res.data.context;
-            $scope.show.board = true;
-        });
-    };
-
-
 }]);
 
-
-
-
-app.factory("context", ["$http", function($http) {
-
-    return {
-        list: function(){
-            return $http.get("/listContexts");
-        },
-        get: function(contextName){
-            return $http.get("/getContext/?name="+contextName);
+app.factory("context", ["$http", "$q", function($http, $q) {
+    var toReturn = {
+        list: null,
+        name:"",
+        blocks:[],
+        connections:[],
+        contents:{},
+        act: {
+            list: function(){
+                var deferred = $q.defer();
+                $http.get("/listContexts").then(function(res) {
+                    toReturn.list = res.data.list;
+                    deferred.resolve(res);
+                });
+                return deferred.promise;
+            },
+            get: function(contextName){
+                var deferred = $q.defer();
+                $http.get("/getContext/?name="+contextName).then(function(res) {
+                    var context = res.data.context;
+                    toReturn.name =        context.name;
+                    toReturn.blocks =      context.blocks;
+                    toReturn.connections = context.connections;
+                    toReturn.contents =    context.contents;
+                    deferred.resolve(res);
+                });
+                return deferred.promise;
+            },
+            save: function() {
+                var deferred = $q.defer();
+                $http.post("/saveContext", {
+                    context: {
+                        name:        toReturn.name,
+                        blocks:      toReturn.blocks,
+                        connections: toReturn.connections,
+                        contents:    toReturn.contents
+                    }
+                }).then(function(res) {
+                    console.log("-!-", res);
+                    deferred.resolve(res);
+                });
+                return deferred.promise;
+            }
         }
     };
-
+    return toReturn;
 }]);
 
-app.directive("connectionDialog", ["$rootScope", function($rootScope){
+app.directive("connectionDialog", ["$rootScope", "context", function($rootScope, context) {
     return {
         replace: false,
         restrict: "E",
         scope: {},
         templateUrl: 'connection-dialog.html',
         link: function (scope, element) {
-            scope.$on("dialog.connection.show", function(event, connection){
-                scope.connection = connection;
+
+            scope.context = context;
+
+            scope.$on("dialogs.connection.show", function(event, key, x, y){
+                scope.key = key;
+                scope.x = x;
+                scope.y = y;
+                scope.connection = scope.context.connections[scope.key];
             });
 
             scope.hideDialog = function(){
                 scope.connection = null;
-                $rootScope.$broadcast("dialog.connection.hide");
+                $rootScope.$broadcast("dialogs.connection.hide");
+            }
+
+            scope.removeConnection = function(){
+                scope.context.connections.splice(scope.key, 1);
+                scope.hideDialog();
+            }
+        }
+    };
+}]);
+
+app.directive("listDialog", ["$rootScope", "context", function($rootScope, context){
+    return {
+        replace: false,
+        restrict: "E",
+        scope: {},
+        templateUrl: 'list-dialog.html',
+        link: function (scope, element) {
+            scope.list = null;
+            scope.$on("dialogs.list.show", function(event) {
+                context.act.list().then(function(res){
+                    scope.list = context.list;
+                });
+            });
+            scope.openContext = function(contextName){
+                context.act.get(contextName).then(function(res){
+                    scope.hideDialog();
+                    $rootScope.$broadcast("context.show");
+                });
+            };
+            scope.hideDialog = function(){
+                console.log(1111);
+                scope.list = null;
             }
         }
     };
@@ -80,7 +134,8 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
         scope: {
             from: "=",
             to: "=",
-            data: "="
+            data: "=",
+            key: "="
         },
         template: '<div class="board_connection" ng-click="callDialog()" style="top:{{top}}px; left:{{left}}px; width:{{hypotenuse}}px; transform: rotateZ({{angle}}deg);"></div>',
         link: function(scope, element){
@@ -92,7 +147,7 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
 
             function moveLine() {
                 var fromX = scope.from.left + scope.from.width;
-                var fromY = scope.from.top  + scope.data.from.line * 16 + 8 + 4; // 4 is for border and padding
+                var fromY = scope.from.top  + scope.data.from.line * 16 + 8 + 4; // 4 is for border and padding, 8 is for half of the line
                 var toX = scope.to.left;
                 var toY = scope.to.top  + scope.to.height / 2;
 
@@ -123,7 +178,7 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
             // is not considered - will be no problem when width and height will be saved as well as top and left
             $timeout(function(){
                 moveLine();
-            }, 10);
+            }, 50);
 
 
             scope.$on("block.moving.on", function(event, args) {
@@ -133,7 +188,6 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
                     ||
                     args.blockKey === scope.data.to.block
                 ){
-                    console.log("11");
                     watchers= scope.$watchGroup([
                         "from.left","from.top","from.width","from.height",
                         "to.left","to.top","to.width","to.height"
@@ -141,21 +195,18 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
                     scope.$on("block.moving.off", function(event) {
                         watchers();
                     });
-                } else {
-                    console.log("22");
                 }
             });
 
             scope.callDialog = function() {
-                $rootScope.$broadcast("dialog.connection.show", scope.data);
-                console.log("data",scope.data);
+                $rootScope.$broadcast("dialogs.connection.show", scope.key, scope.left+70, scope.top+40);
                 var watchers = scope.$watchGroup([
                     "data.from.block", "data.from.line",
-                    "data.to.block", "data.to.line"
+                    "data.to.block",   "data.to.line"
                 ],function(){
                     moveLine();
                 })
-                scope.$on("dialog.connection.hide", function(){
+                scope.$on("dialogs.connection.hide", function(){
                     watchers();
                 });
             }
@@ -163,7 +214,6 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
         }
     };
 }]);
-
 
 app.directive("boardBlock", ["$rootScope", function($rootScope){
 

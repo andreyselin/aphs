@@ -1,7 +1,12 @@
-<div class="dialog" ng-if="connection">
+<div class="dialog" ng-if="connection" style="left:{{x}}px;top:{{y}}px;">
     <div class="dialog_close-button" ng-click="hideDialog()">X</div>
     <div class="dialog_title">Connection properties</div>
     <div class="dialog_body">
-        From line: <input type="number" max="10" ng-model="connection.from.line" />
+        <div>
+            From line: <input type="number" max="100" ng-model="connection.from.line" />
+        </div>
+        <div>
+            <button ng-click="removeConnection()">Remove connection</button>
+        </div>
     </div>
 </div>
