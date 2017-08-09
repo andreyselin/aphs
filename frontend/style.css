@@ -124,12 +124,19 @@ button{
 .dialog_body {
 
 }
-.dialog-list_item {
-    cursor: pointer;
-    box-sizing: border-box;
-    border: 1px silver solid;
+.dialog_row {
+    margin-bottom:5px;
     padding:8px 10px;
+    box-sizing: border-box;
 }
-.dialog-list_item:hover {
+.dialog_row.__active {
+    cursor: pointer;
+    border: 1px silver solid;
+}
+.dialog_row.__active:hover {
     background: silver;
+}
+
+input.__line-number {
+    width:40px;
 }

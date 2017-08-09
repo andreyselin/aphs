@@ -11,10 +11,12 @@
                 <div class="menu">
                     <!--<button class="__link">Create context</button>-->
                     <button class="__link" ng-click="showContextsList()">Open context</button>
-                    <button class="__link" ng-click="saveContext()" ng-if="context !== null">Save context: {{context.name}}</button>
+                    <button class="__link" ng-click="saveContext()"    ng-if="context !== null">Save context: {{context.name}}</button>
+                    <button class="__link" ng-click="showBlocksList()" ng-if="context !== null">Add block</button>
                 </div>
                 <div class="main">
-                    <list-dialog></list-dialog>
+                    <contexts-list-dialog></contexts-list-dialog>
+                    <blocks-list-dialog></blocks-list-dialog>
                     <connection-dialog context="data.context"></connection-dialog>
                     <div class="board">
                         <board-block ng-repeat="(key, block) in context.blocks" key="key" data="block" content="context.contents[block.name]"></board-block>

@@ -9,7 +9,7 @@ app.controller("bodyController",["$scope", "context", "$rootScope", function($sc
 
     // This should be moved to particular menu controller
     $scope.showContextsList = function(){
-        $rootScope.$broadcast("dialogs.list.show");
+        $rootScope.$broadcast("dialogs.contextsList.show");
     };
 
     $scope.$on("context.show", function(event){
@@ -18,6 +18,10 @@ app.controller("bodyController",["$scope", "context", "$rootScope", function($sc
 
     $scope.saveContext = function() {
         context.act.save();
+    }
+
+    $scope.showBlocksList = function(){
+        $rootScope.$broadcast("dialogs.blocksList.show");
     }
 
 }]);
@@ -81,6 +85,26 @@ app.factory("context", ["$http", "$q", function($http, $q) {
     return toReturn;
 }]);
 
+
+app.factory("blocks", ["$http", "$q", function($http, $q) {
+    var blocks = {
+        list: [],
+        act: {
+            list: function(){
+                var deferred = $q.defer();
+                $http.get("/listBlocks").then(function(res) {
+                    blocks.list = res.data.list;
+                    deferred.resolve(res);
+                });
+                return deferred.promise;
+            },
+        }
+    };
+    return blocks;
+
+}]);
+
+
 app.directive("connectionDialog", ["$rootScope", "context", function($rootScope, context) {
     return {
         replace: false,
@@ -111,15 +135,15 @@ app.directive("connectionDialog", ["$rootScope", "context", function($rootScope,
     };
 }]);
 
-app.directive("listDialog", ["$rootScope", "context", function($rootScope, context){
+app.directive("contextsListDialog", ["$rootScope", "context", function($rootScope, context){
     return {
         replace: false,
         restrict: "E",
         scope: {},
-        templateUrl: 'list-dialog.html',
+        templateUrl: 'contexts-list-dialog.html',
         link: function (scope, element) {
             scope.list = null;
-            scope.$on("dialogs.list.show", function(event) {
+            scope.$on("dialogs.contextsList.show", function(event) {
                 context.act.list().then(function(res){
                     scope.list = context.list;
                 });
@@ -130,6 +154,29 @@ app.directive("listDialog", ["$rootScope", "context", function($rootScope, conte
                     $rootScope.$broadcast("context.show");
                 });
             };
+            scope.hideDialog = function(){
+                scope.list = null;
+            }
+        }
+    };
+}]);
+
+app.directive("blocksListDialog", ["$rootScope", "blocks", function($rootScope, blocks){
+    return {
+        replace: false,
+        restrict: "E",
+        scope: {},
+        templateUrl: 'blocks-list-dialog.html',
+        link: function (scope, element) {
+            scope.list = null;
+            scope.$on("dialogs.blocksList.show", function(event) {
+                blocks.act.list().then(function(res){
+                    scope.list = blocks.list;
+                });
+            });
+            scope.openBlock = function(blockName) {
+                console.log("todo");
+            }
             scope.hideDialog = function(){
                 scope.list = null;
             }

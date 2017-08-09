@@ -19,12 +19,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-app.get('/',                        function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/index.html')); });
-app.get('/board-block.html',        function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/board-block.html')); });
-app.get('/connection-dialog.html',  function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/connection-dialog.html')); });
-app.get('/list-dialog.html',        function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/list-dialog.html')); });
-app.get('/style.css',               function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/style.css')); });
-app.get('/script.js',               function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/script.js')); });
+app.get('/',                          function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/index.html')); });
+app.get('/board-block.html',          function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/board-block.html')); });
+app.get('/connection-dialog.html',    function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/connection-dialog.html')); });
+app.get('/contexts-list-dialog.html', function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/contexts-list-dialog.html')); });
+app.get('/blocks-list-dialog.html',   function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/blocks-list-dialog.html')); });
+app.get('/style.css',                 function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/style.css')); });
+app.get('/script.js',                 function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/script.js')); });
 
 
 
@@ -114,6 +115,20 @@ app.post("/saveBlockContent", function(req, res) {
     aphs.saveBlockContent(block.name, block.content);
 
     var responseBody = {status:0};
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.write(JSON.stringify(responseBody));
+    res.end();
+});
+
+
+
+
+
+
+app.get("/listBlocks", function(req, res) {
+    var json = aphs.getJSON();
+    var list = json.blocks.map(function(block){ return block.name; });
+    var responseBody = {list:list};
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.write(JSON.stringify(responseBody));
     res.end();
