@@ -19,10 +19,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-app.get('/',                    function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/index.html')); });
-app.get('/board-block.html',    function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/board-block.html')); });
-app.get('/style.css',           function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/style.css')); });
-app.get('/script.js',           function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/script.js')); });
+app.get('/',                        function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/index.html')); });
+app.get('/board-block.html',        function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/board-block.html')); });
+app.get('/connection-dialog.html',  function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/connection-dialog.html')); });
+app.get('/list-dialog.html',        function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/list-dialog.html')); });
+app.get('/style.css',               function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/style.css')); });
+app.get('/script.js',               function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/script.js')); });
 
 
 
@@ -50,13 +52,13 @@ app.get("/updateBlocks", function(req, res) {
 
 app.get("/listContexts", function(req, res) {
     var json = aphs.getJSON();
-    var contexts = json.contexts.map(function(context){
+    var list = json.contexts.map(function(context){
         return {
             "name":context.name,
             title: context.title
         }
     });
-    var responseBody = {contexts:contexts};
+    var responseBody = {list:list};
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.write(JSON.stringify(responseBody));
     res.end();
@@ -107,7 +109,7 @@ app.get("/getContext", function(req, res) {
 
 app.post("/saveBlockContent", function(req, res) {
 
-    var block = JSON.parse(req.body.blockToSave);
+    var block = req.body.blockToSave;
 
     aphs.saveBlockContent(block.name, block.content);
 
@@ -124,7 +126,8 @@ app.post("/saveBlockContent", function(req, res) {
 
 
 app.post("/saveContext", function(req, res) {
-    var contextToSave = JSON.parse(req.body.context);
+    var contextToSave = req.body.context;
+    contextToSave.contents = {}; // adding empty contents
     var json = aphs.getJSON();
 
     var updated = false;

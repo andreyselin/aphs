@@ -5,6 +5,7 @@ var app = angular.module("app",[]);
 
 app.controller("bodyController",["$scope", "context", "$rootScope", function($scope, context, $rootScope){
 
+    $scope.context = null;
 
     // This should be moved to particular menu controller
     $scope.showContextsList = function(){
@@ -24,7 +25,7 @@ app.controller("bodyController",["$scope", "context", "$rootScope", function($sc
 app.factory("context", ["$http", "$q", function($http, $q) {
     var toReturn = {
         list: null,
-        name:"",
+        name: null,
         blocks:[],
         connections:[],
         contents:{},
@@ -56,10 +57,21 @@ app.factory("context", ["$http", "$q", function($http, $q) {
                         name:        toReturn.name,
                         blocks:      toReturn.blocks,
                         connections: toReturn.connections,
-                        contents:    toReturn.contents
+                        // contents: {} // this is added at serverside
                     }
                 }).then(function(res) {
-                    console.log("-!-", res);
+                    deferred.resolve(res);
+                });
+                return deferred.promise;
+            },
+            saveBlockContent: function(name, content) {
+                var deferred = $q.defer();
+                $http.post("/saveBlockContent", {
+                    blockToSave: {
+                        name:    name,
+                        content: toReturn.contents[name]
+                    }
+                }).then(function(res) {
                     deferred.resolve(res);
                 });
                 return deferred.promise;
@@ -119,7 +131,6 @@ app.directive("listDialog", ["$rootScope", "context", function($rootScope, conte
                 });
             };
             scope.hideDialog = function(){
-                console.log(1111);
                 scope.list = null;
             }
         }
@@ -215,7 +226,7 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
     };
 }]);
 
-app.directive("boardBlock", ["$rootScope", function($rootScope){
+app.directive("boardBlock", ["$rootScope", "$timeout", "context", function($rootScope, $timeout, context){
 
     return {
         replace:true,
@@ -227,6 +238,9 @@ app.directive("boardBlock", ["$rootScope", function($rootScope){
         },
         templateUrl: './board-block.html',
         link: function(scope, element){
+
+
+
             var textarea = element[0].children[1];
             scope.expandTextarea= function() {
 
@@ -240,7 +254,7 @@ app.directive("boardBlock", ["$rootScope", function($rootScope){
                         }
                     });
                     return {
-                        width: longest * 7.5,
+                        width: longest * 9.5,
                         height: (array.length+1) * 16
                     };
                 }
@@ -249,14 +263,13 @@ app.directive("boardBlock", ["$rootScope", function($rootScope){
 
                 scope.data.width = newBounds.width;
                 scope.data.height = newBounds.height;
-                textarea.style.width = scope.data.width + 'px';
-                textarea.style.height = '1px';
-                textarea.style.height = scope.data.height + 'px';
+                textarea.style.width = scope.data.width;
+                textarea.style.height= scope.data.height;
 
             }
 
             var header = element[0].children[0];
-            header.onmousedown = function(eventDown){
+            header.onmousedown = function(eventDown) {
                 $rootScope.$broadcast("block.moving.on", {blockKey: scope.key});
 
                 document.onmousemove = function (event) {
@@ -274,10 +287,32 @@ app.directive("boardBlock", ["$rootScope", function($rootScope){
                 }
             }
 
-            scope.expandTextarea();
-            scope.$watch("content", function(){
+            scope.saveBlockContent = function() {
+                context.act.saveBlockContent(scope.data.name).then(function(){
+                    scope.contentIsChanged = false;
+                });
+            }
+
+
+            // If block has content
+            // (marks exist in file)
+            // expand textarea
+            if(scope.content !== null) {(function(){
+                var watcherInitiated = false;
+                scope.onFocus = function() {
+                    textareaWatcher = scope.$watch("content", function(newValue, oldValue){
+                        if(newValue !== oldValue) {
+                            scope.contentIsChanged = true;
+                            scope.expandTextarea();
+                        }
+                    });
+                }
+                scope.onBlur = function() {
+                    textareaWatcher();
+                }
                 scope.expandTextarea();
-            });
+            })()}
+
 
         }
     };

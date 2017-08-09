@@ -1,13 +1,54 @@
 {
-  "contexts":[
+  "contexts": [
     {
       "name": "default",
-      "title": "Default context",
-      "content": {
-        "blocks":[],
-        "connections":[]
-      }
+      "blocks": [
+        {
+          "name": "myBlock",
+          "top": 170,
+          "left": 148,
+          "width": 195,
+          "height": 96
+        },
+        {
+          "name": "aha",
+          "top": 278,
+          "left": 485,
+          "width": 150,
+          "height": 32
+        }
+      ],
+      "connections": [
+        {
+          "from": {
+            "block": 0,
+            "line": 2
+          },
+          "to": {
+            "block": 1
+          }
+        },
+        {
+          "from": {
+            "block": 0,
+            "line": 4
+          },
+          "to": {
+            "block": 1
+          }
+        }
+      ],
+      "contents": {}
     }
   ],
-  "blocks": []
+  "blocks": [
+    {
+      "name": "myBlock",
+      "filename": "another.php"
+    },
+    {
+      "name": "aha",
+      "filename": "tmp.js"
+    }
+  ]
 }

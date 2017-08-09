@@ -11,7 +11,7 @@
                 <div class="menu">
                     <!--<button class="__link">Create context</button>-->
                     <button class="__link" ng-click="showContextsList()">Open context</button>
-                    <button class="__link" ng-click="saveContext()" ng-if="context !== null">Save context</button>
+                    <button class="__link" ng-click="saveContext()" ng-if="context !== null">Save context: {{context.name}}</button>
                 </div>
                 <div class="main">
                     <list-dialog></list-dialog>
