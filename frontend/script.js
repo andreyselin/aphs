@@ -24,9 +24,20 @@ app.controller("bodyController",["$scope", "context", "$rootScope", function($sc
         $rootScope.$broadcast("dialogs.blocksList.show");
     }
 
+    $scope.addConnection = function(){
+        $rootScope.$broadcast("connection.add", context.act.createConnection());
+    }
+
 }]);
 
-app.factory("context", ["$http", "$q", function($http, $q) {
+app.factory("context", ["$rootScope", "$http", "$q", function($rootScope, $http, $q) {
+
+    $rootScope.$on("connection.add", function(event, newConnection) {
+        if(newConnection.from.block !== null && newConnection.to.block !== null){
+            toReturn.connections.push(newConnection);
+        }
+    });
+
     var toReturn = {
         list: null,
         name: null,
@@ -34,6 +45,12 @@ app.factory("context", ["$http", "$q", function($http, $q) {
         connections:[],
         contents:{},
         act: {
+            createConnection: function(){
+                return {
+                    from: {block:null, line:null},
+                    to:   {block:null, line:null}
+                }
+            },
             list: function(){
                 var deferred = $q.defer();
                 $http.get("/listContexts").then(function(res) {
@@ -338,6 +355,26 @@ app.directive("boardBlock", ["$rootScope", "$timeout", "context", function($root
         },
         templateUrl: './board-block.html',
         link: function(scope, element){
+
+
+
+            scope.$on("connection.add", function(event, newConnection) {
+                scope.connectionStep = null;
+                if(newConnection.to.block === null){
+                    scope.connectionStep = "to"
+                }
+                if(newConnection.from.block === null){
+                    scope.connectionStep = "from"
+                }
+                if(newConnection.from.block !== null && newConnection.to.block !== null){
+                    scope.connectionStep = null;
+                }
+
+                scope.addConnection = function() {
+                    newConnection[scope.connectionStep].block = scope.key;
+                    $rootScope.$broadcast("connection.add", newConnection);
+                }
+            });
 
 
 

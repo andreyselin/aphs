@@ -13,14 +13,15 @@
                     <button class="__link" ng-click="showContextsList()">Open context</button>
                     <button class="__link" ng-click="saveContext()"    ng-if="context !== null">Save context: {{context.name}}</button>
                     <button class="__link" ng-click="showBlocksList()" ng-if="context !== null">Add block</button>
+                    <button class="__link" ng-click="addConnection()" ng-if="context !== null">Add connection</button>
                 </div>
                 <div class="main">
                     <contexts-list-dialog></contexts-list-dialog>
                     <blocks-list-dialog></blocks-list-dialog>
                     <connection-dialog context="data.context"></connection-dialog>
                     <div class="board">
-                        <board-block ng-repeat="(key, block) in context.blocks" key="key" data="block" content="context.contents[block.name]"></board-block>
-                        <board-connection ng-repeat="(key, connection) in context.connections" key="key" data="connection" from="context.blocks[connection.from.block]" to="context.blocks[connection.to.block]"></board-connection>
+                        <board-block ng-repeat="(key, block) in context.blocks track by $index" key="key" data="block" content="context.contents[block.name]"></board-block>
+                        <board-connection ng-repeat="(key, connection) in context.connections track by $index" key="key" data="connection" from="context.blocks[connection.from.block]" to="context.blocks[connection.to.block]"></board-connection>
                     </div>
                 </div>
             </div>
