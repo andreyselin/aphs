@@ -68,6 +68,34 @@ app.factory("context", ["$http", "$q", function($http, $q) {
                 });
                 return deferred.promise;
             },
+            addBlock: function(blockName){
+
+                function doAddBlock(content) {
+                    var newBlock = {
+                        name:blockName,
+                        width:300,
+                        height:200,
+                        left:200,
+                        top:200
+                    }
+                    toReturn.blocks.push(newBlock);
+                    deferred.resolve(newBlock);
+                }
+
+                var deferred = $q.defer();
+
+                if (toReturn.contents[blockName]){
+                    doAddBlock();
+                } else {
+
+                    $http.get("/getBlockContent").then(function(res) {
+                        toReturn.contents[blockName] = res.data.content;
+                        doAddBlock();
+                    });
+
+                }
+                return deferred.promise;
+            },
             saveBlockContent: function(name, content) {
                 var deferred = $q.defer();
                 $http.post("/saveBlockContent", {
@@ -79,12 +107,37 @@ app.factory("context", ["$http", "$q", function($http, $q) {
                     deferred.resolve(res);
                 });
                 return deferred.promise;
+            },
+            removeBlock: function(key) {
+                toReturn.blocks.splice(key, 1);
+
+                var oldConnections = angular.copy(toReturn.connections);
+                oldConnections.forEach(function(connection, connectionKey){
+                    [connection.from, connection.to].forEach(function(connectionBlock) {
+
+                        if (connectionBlock.block === key){
+                            oldConnections[connectionKey] = null;
+                        } else {
+                            if (connectionBlock.block > key) {
+                                connectionBlock.block -= 1;
+                            }
+                        }
+
+                    });
+
+                });
+                var newConnections = [];
+                oldConnections.forEach(function(connection){
+                    if (connection !== null){
+                        newConnections.push(connection);
+                    }
+                });
+                toReturn.connections = newConnections;
             }
         }
     };
     return toReturn;
 }]);
-
 
 app.factory("blocks", ["$http", "$q", function($http, $q) {
     var blocks = {
@@ -97,13 +150,12 @@ app.factory("blocks", ["$http", "$q", function($http, $q) {
                     deferred.resolve(res);
                 });
                 return deferred.promise;
-            },
+            }
         }
     };
     return blocks;
 
 }]);
-
 
 app.directive("connectionDialog", ["$rootScope", "context", function($rootScope, context) {
     return {
@@ -161,7 +213,7 @@ app.directive("contextsListDialog", ["$rootScope", "context", function($rootScop
     };
 }]);
 
-app.directive("blocksListDialog", ["$rootScope", "blocks", function($rootScope, blocks){
+app.directive("blocksListDialog", ["$rootScope", "context", "blocks", function($rootScope, context, blocks){
     return {
         replace: false,
         restrict: "E",
@@ -174,8 +226,9 @@ app.directive("blocksListDialog", ["$rootScope", "blocks", function($rootScope, 
                     scope.list = blocks.list;
                 });
             });
-            scope.openBlock = function(blockName) {
-                console.log("todo");
+            scope.addBlock = function(blockName) {
+                context.act.addBlock(blockName);
+                scope.hideDialog();
             }
             scope.hideDialog = function(){
                 scope.list = null;
@@ -288,7 +341,7 @@ app.directive("boardBlock", ["$rootScope", "$timeout", "context", function($root
 
 
 
-            var textarea = element[0].children[1];
+            var textarea = element[0].children[2];
             scope.expandTextarea= function() {
 
                 function getBounds(text) {
@@ -315,7 +368,7 @@ app.directive("boardBlock", ["$rootScope", "$timeout", "context", function($root
 
             }
 
-            var header = element[0].children[0];
+            var header = element[0].children[1];
             header.onmousedown = function(eventDown) {
                 $rootScope.$broadcast("block.moving.on", {blockKey: scope.key});
 
@@ -338,6 +391,10 @@ app.directive("boardBlock", ["$rootScope", "$timeout", "context", function($root
                 context.act.saveBlockContent(scope.data.name).then(function(){
                     scope.contentIsChanged = false;
                 });
+            }
+
+            scope.removeBlock = function() {
+                context.act.removeBlock(scope.key);
             }
 
 

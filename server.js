@@ -108,6 +108,19 @@ app.get("/getContext", function(req, res) {
 
 
 
+app.get("/getBlockContent", function(req, res) {
+    var blockName = req.body.blockName;
+    var responseBody = {content:aphs.getBlockContent(blockName)};
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.write(JSON.stringify(responseBody));
+    res.end();
+});
+
+
+
+
+
+
 app.post("/saveBlockContent", function(req, res) {
 
     var block = req.body.blockToSave;
