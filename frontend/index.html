@@ -10,10 +10,12 @@
             <div class="body" ng-controller="bodyController">
                 <div class="menu">
                     <!--<button class="__link">Create context</button>-->
-                    <button class="__link" ng-click="showContextsList()">Open context</button>
-                    <button class="__link" ng-click="saveContext()"    ng-if="context !== null">Save context: {{context.name}}</button>
-                    <button class="__link" ng-click="showBlocksList()" ng-if="context !== null">Add block</button>
-                    <button class="__link" ng-click="addConnection()" ng-if="context !== null">Add connection</button>
+                    <button ng-click="showContextsList()">Open context</button>
+                    <div class="context-controls" ng-if="context !== null">
+                        <button ng-click="saveContext()" >Save context: {{context.name}}</button>
+                        <button ng-click="showBlocksList()">Add block</button>
+                        <button ng-click="addConnection()">Add connection</button>
+                    </div>
                 </div>
                 <div class="main">
                     <contexts-list-dialog></contexts-list-dialog>

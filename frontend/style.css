@@ -28,6 +28,10 @@ html, body {
     box-sizing: border-box;
     padding:10px 15px;
 }
+.context-controls {
+    display: flex;
+    align-items: center;
+}
 button{
     font-size:1rem;
     border: 0;
