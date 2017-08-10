@@ -30,6 +30,29 @@ html, body {
 }
 button{
     font-size:1rem;
+    border: 0;
+    background: #37ce30;
+    color: white;
+    border-radius: 20px;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+button.__big {
+    font-size:1.3rem;
+}
+button:hover {
+    background: #ca3ece;
+}
+button.__red-link {
+    background: none;
+    border-bottom: 1px solid red;
+    color: red;
+    padding: 0 0 3px 0;
+    border-radius: 0;
+}
+button.__red-link:hover {
+    border-bottom: 1px solid #62a0ff;
+    color: #62a0ff;
 }
 .menu button {
     margin-right:10px;
@@ -50,10 +73,21 @@ button{
 }
 
 
-.board {
+.board-container {
     width:100%;
     overflow: hidden;
     position: relative;
+}
+
+.board-panner {
+    cursor: hand;
+    background: #fff;
+    width:100%;
+    height:100%;
+}
+
+.board {
+    position: absolute;
 }
 
 
@@ -88,8 +122,8 @@ button{
     margin-bottom: 5px;
 }
 .board_block_textarea {
-    border:1px solid silver;
-    padding:3px 4px;
+    border:1px solid #e8e8e8;
+    padding:6px 9px;
     line-height: 16px;
     font-family: monospace;
     font-size: 14px;
@@ -120,7 +154,7 @@ button{
     cursor: pointer;
     position: absolute;
     height:4px;
-    background: silver;
+    background: #e8e8e8;
     border-radius: 3px;
 }
 .board_connection:hover {

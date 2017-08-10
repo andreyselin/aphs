@@ -4,9 +4,10 @@
     <div class="dialog_body">
         <div class="dialog_row">
             From line: <input type="number" max="100" ng-model="connection.from.line" class="__line-number" />
+            <button ng-click="hideDialog()">Ok</button>
         </div>
         <div class="dialog_row">
-            <button ng-click="removeConnection()">Remove connection</button>
+            <button class="__red-link" ng-click="removeConnection()">Remove connection</button>
         </div>
     </div>
 </div>

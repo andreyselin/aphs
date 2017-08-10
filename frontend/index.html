@@ -19,9 +19,12 @@
                     <contexts-list-dialog></contexts-list-dialog>
                     <blocks-list-dialog></blocks-list-dialog>
                     <connection-dialog context="data.context"></connection-dialog>
-                    <div class="board">
-                        <board-block ng-repeat="(key, block) in context.blocks track by $index" key="key" data="block" content="context.contents[block.name]"></board-block>
-                        <board-connection ng-repeat="(key, connection) in context.connections track by $index" key="key" data="connection" from="context.blocks[connection.from.block]" to="context.blocks[connection.to.block]"></board-connection>
+                    <div class="board-container">
+                        <div class="board" style="top:{{context.position.top}};left:{{context.position.left}}">
+                            <board-block ng-repeat="(key, block) in context.blocks track by $index" key="key" data="block" content="context.contents[block.name]"></board-block>
+                            <board-connection ng-repeat="(key, connection) in context.connections track by $index" key="key" data="connection" from="context.blocks[connection.from.block]" to="context.blocks[connection.to.block]"></board-connection>
+                        </div>
+                        <div class="board-panner" ng-mousedown="panBoard($event)"></div>
                     </div>
                 </div>
             </div>

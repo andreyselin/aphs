@@ -3,7 +3,7 @@ var app = angular.module("app",[]);
 
 
 
-app.controller("bodyController",["$scope", "context", "$rootScope", function($scope, context, $rootScope){
+app.controller("bodyController",["$document", "$scope", "context", "$rootScope", function($document, $scope, context, $rootScope){
 
     $scope.context = null;
 
@@ -14,7 +14,7 @@ app.controller("bodyController",["$scope", "context", "$rootScope", function($sc
 
     $scope.$on("context.show", function(event){
         $scope.context = context;
-    })
+    });
 
     $scope.saveContext = function() {
         context.act.save();
@@ -26,6 +26,26 @@ app.controller("bodyController",["$scope", "context", "$rootScope", function($sc
 
     $scope.addConnection = function(){
         $rootScope.$broadcast("connection.add", context.act.createConnection());
+    }
+
+    $scope.panBoard = function(eventDown) {
+
+        var flowStartX = $scope.context.position.left;
+        var flowStartY = $scope.context.position.top;
+
+        document.onmousemove = function (panEvent) {
+            $scope.$apply(function(){
+                $scope.context.position.left = flowStartX - (eventDown.clientX - panEvent.clientX);
+                $scope.context.position.top  = flowStartY - (eventDown.clientY - panEvent.clientY);
+            });
+        }
+        document.onmouseup = function() {
+            $scope.$apply(function(){
+                document.onmousemove = null;
+                document.onmouseup = null;
+            });
+        }
+
     }
 
 }]);
@@ -41,6 +61,10 @@ app.factory("context", ["$rootScope", "$http", "$q", function($rootScope, $http,
     var toReturn = {
         list: null,
         name: null,
+        position: {
+            top:0,
+            left:0
+        },
         blocks:[],
         connections:[],
         contents:{},
@@ -64,6 +88,7 @@ app.factory("context", ["$rootScope", "$http", "$q", function($rootScope, $http,
                 $http.get("/getContext/?name="+contextName).then(function(res) {
                     var context = res.data.context;
                     toReturn.name =        context.name;
+                    toReturn.position =    context.position;
                     toReturn.blocks =      context.blocks;
                     toReturn.connections = context.connections;
                     toReturn.contents =    context.contents;
@@ -76,6 +101,7 @@ app.factory("context", ["$rootScope", "$http", "$q", function($rootScope, $http,
                 $http.post("/saveContext", {
                     context: {
                         name:        toReturn.name,
+                        position:    toReturn.position,
                         blocks:      toReturn.blocks,
                         connections: toReturn.connections,
                         // contents: {} // this is added at serverside
@@ -194,7 +220,7 @@ app.directive("connectionDialog", ["$rootScope", "context", function($rootScope,
             scope.hideDialog = function(){
                 scope.connection = null;
                 $rootScope.$broadcast("dialogs.connection.hide");
-            }
+            };
 
             scope.removeConnection = function(){
                 scope.context.connections.splice(scope.key, 1);
@@ -265,7 +291,7 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
             data: "=",
             key: "="
         },
-        template: '<div class="board_connection" ng-click="callDialog()" style="top:{{top}}px; left:{{left}}px; width:{{hypotenuse}}px; transform: rotateZ({{angle}}deg);"></div>',
+        template: '<div class="board_connection" ng-click="callDialog($event)" style="top:{{top}}px; left:{{left}}px; width:{{hypotenuse}}px; transform: rotateZ({{angle}}deg);"></div>',
         link: function(scope, element){
 
             scope.hypotenuse = 0;
@@ -275,7 +301,7 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
 
             function moveLine() {
                 var fromX = scope.from.left + scope.from.width;
-                var fromY = scope.from.top  + scope.data.from.line * 16 + 8 + 4; // 4 is for border and padding, 8 is for half of the line
+                var fromY = scope.from.top  + scope.data.from.line * 16 - 8 + 7; // 7 is for border and padding, 8 is for half of the line
                 var toX = scope.to.left;
                 var toY = scope.to.top  + scope.to.height / 2;
 
@@ -326,8 +352,12 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
                 }
             });
 
-            scope.callDialog = function() {
-                $rootScope.$broadcast("dialogs.connection.show", scope.key, scope.left+70, scope.top+40);
+            scope.callDialog = function(event) {
+                $rootScope.$broadcast("dialogs.connection.show",
+                    scope.key,
+                    event.x+20, // need to find out why
+                    event.y-40  // coords behave so strangely
+                );
                 var watchers = scope.$watchGroup([
                     "data.from.block", "data.from.line",
                     "data.to.block",   "data.to.line"
@@ -335,7 +365,9 @@ app.directive("boardConnection", ["$rootScope", "$timeout", function($rootScope,
                     moveLine();
                 })
                 scope.$on("dialogs.connection.hide", function(){
-                    watchers();
+                    $timeout(function(){
+                        watchers();
+                    });
                 });
             }
 
@@ -407,12 +439,17 @@ app.directive("boardBlock", ["$rootScope", "$timeout", "context", function($root
 
             var header = element[0].children[1];
             header.onmousedown = function(eventDown) {
+
+                // This is to be listened in connections
                 $rootScope.$broadcast("block.moving.on", {blockKey: scope.key});
 
-                document.onmousemove = function (event) {
+                var flowStartX = scope.data.left;
+                var flowStartY = scope.data.top;
+
+                document.onmousemove = function (panEvent) {
                     scope.$apply(function(){
-                        scope.data.left = event.clientX;
-                        scope.data.top  = event.clientY;
+                        scope.data.left = flowStartX - (eventDown.clientX - panEvent.clientX);;
+                        scope.data.top  = flowStartY - (eventDown.clientY - panEvent.clientY);;
                     });
                 }
                 document.onmouseup = function() {
