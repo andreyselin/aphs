@@ -113,7 +113,7 @@ app.factory("context", ["$rootScope", "$http", "$q", function($rootScope, $http,
             },
             addBlock: function(blockName){
 
-                function doAddBlock(content) {
+                function doAddBlock() {
                     var newBlock = {
                         name:blockName,
                         width:300,
@@ -128,10 +128,12 @@ app.factory("context", ["$rootScope", "$http", "$q", function($rootScope, $http,
                 var deferred = $q.defer();
 
                 if (toReturn.contents[blockName]){
+                    console.log("1", blockName);
                     doAddBlock();
                 } else {
 
-                    $http.get("/getBlockContent").then(function(res) {
+                    console.log("2", blockName);
+                    $http.get("/getBlockContent/?blockName="+blockName).then(function(res) {
                         toReturn.contents[blockName] = res.data.content;
                         doAddBlock();
                     });

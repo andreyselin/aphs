@@ -39,15 +39,15 @@ function updateProjectBlocks(){
 
 function parseFile(filename) {
     var code = fs.readFileSync(srcPath+"/"+filename, "utf8");
-    var regExp = new RegExp("/*-" + '(.+?)' + "-*/", 'gim');
+    var regExp = new RegExp(/\/\*-(.+?)-\*\//, 'gim');
     var array = code.match(regExp);
     var toReturn = [];
     if (array !== null) {
         array.forEach(function(clip, index, array) {
-            var closer = "/*-/" + clip.substring(2, clip.length);
+            var closer ="/*-/" + clip.substring(3, clip.length);
             if (array.indexOf(closer, index + 1) !== -1) {
                 toReturn.push({
-                    name: clip.substring(2, clip.length-2),
+                    name: clip.substring(3, clip.length-3),
                     filename: filename
                 });
             }
@@ -72,14 +72,22 @@ function getBlocks() {
 
 function getBlockContent(blockName) {
     var code = getFileContent.byBlockName(blockName);
-    if (
-        code.indexOf("/*-"+blockName+"-*/") !== -1
-        &&
-        code.indexOf("/*-/"+blockName+"-*/") !== -1
-    ){
-        return code.split("/*-"+blockName+"-*/\n")[1].split("\n/*-/"+blockName+"-*/")[0];
-    } else {
+    if (!code) {
+        // If cannot find file
+        console.log("Can not find file with block "+blockName);
         return null;
+    } else {
+        if (
+            code.indexOf("/*-"+blockName+"-*/") !== -1
+            &&
+            code.indexOf("/*-/"+blockName+"-*/") !== -1
+        ){
+            return code.split("/*-"+blockName+"-*/\n")[1].split("\n/*-/"+blockName+"-*/")[0];
+        } else {
+            // If there is no marks in file
+            console.log ("Block is not closed: "+blockName);
+            return null;
+        }
     }
 }
 

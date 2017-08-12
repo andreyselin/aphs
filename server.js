@@ -109,7 +109,7 @@ app.get("/getContext", function(req, res) {
 
 
 app.get("/getBlockContent", function(req, res) {
-    var blockName = req.body.blockName;
+    var blockName = req.query.blockName;
     var responseBody = {content:aphs.getBlockContent(blockName)};
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.write(JSON.stringify(responseBody));
