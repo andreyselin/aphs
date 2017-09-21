@@ -3,7 +3,8 @@ var app = angular.module("app",[]);
 
 
 
-app.controller("bodyController",["$document", "$scope", "context", "$rootScope", function($document, $scope, context, $rootScope){
+app.controller("bodyController",["$document", "$scope", "context", "blocks", "$rootScope",
+    function(                     $document,   $scope,   context,   blocks,   $rootScope   ){
 
     $scope.context = null;
 
@@ -18,15 +19,21 @@ app.controller("bodyController",["$document", "$scope", "context", "$rootScope",
 
     $scope.saveContext = function() {
         context.act.save();
-    }
+    };
 
     $scope.showBlocksList = function(){
         $rootScope.$broadcast("dialogs.blocksList.show");
-    }
+    };
 
     $scope.addConnection = function(){
         $rootScope.$broadcast("connection.add", context.act.createConnection());
-    }
+    };
+
+    $scope.updateProjectBlocks = function() {
+        blocks.act.update().then(function() {
+            alert("Project blocks have been successfully updated");
+        });
+    };
 
     $scope.panBoard = function(eventDown) {
 
@@ -38,7 +45,7 @@ app.controller("bodyController",["$document", "$scope", "context", "$rootScope",
                 $scope.context.position.left = flowStartX - (eventDown.clientX - panEvent.clientX);
                 $scope.context.position.top  = flowStartY - (eventDown.clientY - panEvent.clientY);
             });
-        }
+        };
         document.onmouseup = function() {
             $scope.$apply(function(){
                 document.onmousemove = null;
@@ -192,6 +199,13 @@ app.factory("blocks", ["$http", "$q", function($http, $q) {
                 var deferred = $q.defer();
                 $http.get("/listBlocks").then(function(res) {
                     blocks.list = res.data.list;
+                    deferred.resolve(res);
+                });
+                return deferred.promise;
+            },
+            update: function(){
+                var deferred = $q.defer();
+                $http.get("/updateProjectBlocks").then(function(res) {
                     deferred.resolve(res);
                 });
                 return deferred.promise;

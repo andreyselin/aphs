@@ -7,16 +7,24 @@ const projectPath = path.resolve(__dirname,'../../');
 const JSONPath = path.resolve(__dirname,'../../aphs.json');
 const defaultJSONPath = path.resolve(__dirname,'./default-aphs.json');
 const srcPath = projectPath+"/src";
+
+// example file copying source and destination in src folder
+const exampleSrcPath  = path.resolve(__dirname,'./aphs-usage-example.js');
+const exampleDestPath = srcPath+'/aphs-usage-example.js';
 const fs = require('fs');
 const fse = require('fs-extra');
 
 
 
-
-function getJSON() {
+function checkAphsInitiated() {
     if (!fs.existsSync(JSONPath)) {
         fse.copySync(defaultJSONPath, JSONPath);
+        fse.copySync(exampleSrcPath, exampleDestPath); // optional, for help
     }
+}
+
+function getJSON() {
+    checkAphsInitiated();
     return JSON.parse(fs.readFileSync(JSONPath, 'utf8'));
 }
 
@@ -139,6 +147,7 @@ var getFileContent = {
 
 
 module.exports = {
+    checkAphsInitiated:checkAphsInitiated,
     updateProjectBlocks:updateProjectBlocks,
     saveBlockContent:saveBlockContent,
     getBlocks:getBlocks,

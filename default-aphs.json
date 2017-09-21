@@ -4,14 +4,14 @@
       "name": "default",
       "blocks": [
         {
-          "name": "myBlock",
+          "name": "sourceBlockExample",
           "top": 170,
           "left": 148,
           "width": 195,
           "height": 96
         },
         {
-          "name": "aha",
+          "name": "targetBlockExample",
           "top": 278,
           "left": 485,
           "width": 150,
@@ -27,15 +27,6 @@
           "to": {
             "block": 1
           }
-        },
-        {
-          "from": {
-            "block": 0,
-            "line": 4
-          },
-          "to": {
-            "block": 1
-          }
         }
       ],
       "contents": {}
@@ -43,12 +34,12 @@
   ],
   "blocks": [
     {
-      "name": "myBlock",
-      "filename": "another.php"
+      "name": "sourceBlockExample",
+      "filename": "aphs-example.js"
     },
     {
-      "name": "aha",
-      "filename": "tmp.js"
+      "name": "targetBlockExample",
+      "filename": "aphs-example.js"
     }
   ]
 }

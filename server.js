@@ -19,7 +19,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-app.get('/',                          function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/index.html')); });
+app.get('/', function(req,res){
+    checkAphsInitiated();
+    res.sendFile(path.resolve(__dirname,'./frontend/index.html'));
+});
+
 app.get('/board-block.html',          function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/board-block.html')); });
 app.get('/connection-dialog.html',    function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/connection-dialog.html')); });
 app.get('/contexts-list-dialog.html', function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/contexts-list-dialog.html')); });
@@ -40,7 +44,7 @@ app.get('/script.js',                 function(req,res){ res.sendFile(path.resol
 
 
 
-app.get("/updateBlocks", function(req, res) {
+app.get("/updateProjectBlocks", function(req, res) {
     aphs.updateProjectBlocks();
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end();

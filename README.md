@@ -12,11 +12,9 @@ To make your first graph follow next steps:
 ---------
 
 1. Run aphs with `npm run aphs`
-
-2. Wrap code blocks you want to visualize with marks ` /*-yourBlockName-*/ yourBlockCode /*-/yourBlockName-*/ ` Note: these blocks should be in files inside `src` directory!
-
-3. Go to http://localhost:9029 in your browser. Aphs was made with Chrome and not tested with other browsers.
-4. Click Open context button and choose default.
-5. Click Place block button, choose one of the blocks you marked up in step 2, then place another one. Now you can edit block contents from here and save it to file.
-6. To connect these blocks click Connect button at first of them, then click the block you want to set connection to.
+2. Go to http://localhost:9029 - on first load it will set up default `aphs.json` in root folder and copy `aphs-usage-example.js` to your `src` path
+3. Click `Open context` button and choose default context – you will see two blocks from copied `src/aphs-usage-example.js`. You can move them by the title, edit and update their files with them, but do not intersect or nest different blocks neither in client nor in code!
+4. You can use code block wrappers ` /*-yourBlockName-*/ yourBlockCode /*-/yourBlockName-*/ ` in any file inside `src` directory. After setting up a new wrapper press `Update project blocks` button in the client to update aphs.json with it and to be able to use it in your contexts.
+5. To use it click `Place block` button and chose it. It will be placed to context board.
+6. To connect these blocks click `Add connection` button in the top menu, then click on connection source object, then on destination.
 7. To edit or remove connection click on it.
