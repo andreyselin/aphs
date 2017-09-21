@@ -120,8 +120,11 @@ function getBlockFilename (blockName){
 
 var getFileContent = {
     byBlockName: function(blockName) {
-        var filename = getBlockFilename(blockName);
-        return filename === null ? null : fs.readFileSync(srcPath+"/"+filename, "utf8");
+        var filePath = srcPath+"/"+getBlockFilename(blockName);
+        if (!fs.existsSync(filePath)) {
+            return null;
+        }
+        return fs.readFileSync(filePath, "utf8");
     }
 };
 
