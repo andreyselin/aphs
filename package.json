@@ -1,7 +1,7 @@
 {
   "name": "aphs",
-  "version": "0.0.1",
-  "description": "Graphs for application developers",
+  "version": "0.0.2",
+  "description": "Interactive graphs for application development",
   "main": "index.js",
   "scripts": {
     "test": "test"
@@ -12,12 +12,15 @@
   },
   "keywords": [
     "graphs",
+    "mindmaps",
+    "development",
+    "blockschemes",
     "mind",
     "maps",
     "block",
     "schemes"
   ],
-  "author": "Andrei Selin, Stepan Omelchenko",
+  "author": "Andrey Selin",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/andreiselin/aphs/issues"
