@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get('/', function(req,res){
-    checkAphsInitiated();
+    aphs.checkAphsInitiated();
     res.sendFile(path.resolve(__dirname,'./frontend/index.html'));
 });
 

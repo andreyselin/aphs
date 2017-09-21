@@ -7,15 +7,15 @@
           "name": "sourceBlockExample",
           "top": 170,
           "left": 148,
-          "width": 195,
-          "height": 96
+          "width": 361,
+          "height": 64
         },
         {
           "name": "targetBlockExample",
-          "top": 278,
-          "left": 485,
-          "width": 150,
-          "height": 32
+          "top": 197,
+          "left": 587,
+          "width": 532,
+          "height": 64
         }
       ],
       "connections": [
@@ -35,11 +35,11 @@
   "blocks": [
     {
       "name": "sourceBlockExample",
-      "filename": "aphs-example.js"
+      "filename": "aphs-usage-example.js"
     },
     {
       "name": "targetBlockExample",
-      "filename": "aphs-example.js"
+      "filename": "aphs-usage-example.js"
     }
   ]
 }
