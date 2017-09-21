@@ -1,14 +1,14 @@
 # aphs
 Graphs for application development
 
-##Simple steps to install:
+Simple steps to install:
 ---------
 
-1. Install with `npm install aphs`
+1. Install with `npm install aphs --save-dev`
 
 2. Update scripts of your package.json with following command: ` "aphs": "node node_modules/aphs/server.js" `
 
-##To make your first graph follow next steps:
+To make your first graph follow next steps:
 ---------
 
 1. Run aphs with `npm run aphs`
