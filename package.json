@@ -1,6 +1,6 @@
 {
   "name": "aphs",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Interactive graphs for application development",
   "main": "index.js",
   "scripts": {
