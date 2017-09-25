@@ -3,8 +3,8 @@ var app = angular.module("app",[]);
 
 
 
-app.controller("bodyController",["$document", "$scope", "context", "blocks", "$rootScope",
-    function(                     $document,   $scope,   context,   blocks,   $rootScope   ){
+app.controller("bodyController",["$document", "$scope", "context", "blocks", "$timeout", "$rootScope",
+    function(                     $document,   $scope,   context,   blocks,   $timeout,   $rootScope   ){
 
     $scope.context = null;
 
@@ -54,9 +54,14 @@ app.controller("bodyController",["$document", "$scope", "context", "blocks", "$r
         }
     };
 
-    alert("We have updated Aphs with new extended version. It is ready for downloading!");
-//     if(new Date() > new Date(2017,10,25)){
-//     }
+    $timeout(function(){
+        if (new Date() > new Date(2017,9,25)){
+            $rootScope.$broadcast(
+                "dialogs.message.show",
+                {message: "We have updated Aphs with new extended version. It is ready for downloading!"}
+            );
+        }
+    },100);
 
 }]);
 
@@ -283,8 +288,8 @@ app.directive("messageDialog", [function(){
         templateUrl: 'message-dialog.html',
         link: function (scope, element) {
             scope.message = null;
-            scope.$on("dialogs.contextsList.show", function(event, theMessage) {
-                scope.message = theMessage;
+            scope.$on("dialogs.message.show", function(event, args) {
+                scope.message = args.message;
             });
             scope.hideDialog = function(){
                 scope.message = null;

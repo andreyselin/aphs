@@ -26,6 +26,7 @@ app.get('/', function(req,res){
 
 app.get('/board-block.html',          function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/board-block.html')); });
 app.get('/connection-dialog.html',    function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/connection-dialog.html')); });
+app.get('/message-dialog.html',       function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/message-dialog.html')); });
 app.get('/contexts-list-dialog.html', function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/contexts-list-dialog.html')); });
 app.get('/blocks-list-dialog.html',   function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/blocks-list-dialog.html')); });
 app.get('/style.css',                 function(req,res){ res.sendFile(path.resolve(__dirname,'./frontend/style.css')); });
