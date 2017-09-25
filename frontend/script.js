@@ -52,8 +52,11 @@ app.controller("bodyController",["$document", "$scope", "context", "blocks", "$r
                 document.onmouseup = null;
             });
         }
+    };
 
-    }
+    alert("We have updated Aphs with new extended version. It is ready for downloading!");
+//     if(new Date() > new Date(2017,10,25)){
+//     }
 
 }]);
 
@@ -267,6 +270,24 @@ app.directive("contextsListDialog", ["$rootScope", "context", function($rootScop
             };
             scope.hideDialog = function(){
                 scope.list = null;
+            }
+        }
+    };
+}]);
+
+app.directive("messageDialog", [function(){
+    return {
+        replace: false,
+        restrict: "E",
+        scope: {},
+        templateUrl: 'message-dialog.html',
+        link: function (scope, element) {
+            scope.message = null;
+            scope.$on("dialogs.contextsList.show", function(event, theMessage) {
+                scope.message = theMessage;
+            });
+            scope.hideDialog = function(){
+                scope.message = null;
             }
         }
     };
