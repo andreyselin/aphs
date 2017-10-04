@@ -10,6 +10,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
+// Handle first running:
+aphs.checkAphsInitiated();
+
+
+
+
         ///////////////////
         //               //
         //   Front-end   //
@@ -20,7 +26,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get('/', function(req,res){
-    aphs.checkAphsInitiated();
     res.sendFile(path.resolve(__dirname,'./frontend/index.html'));
 });
 

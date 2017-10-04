@@ -453,6 +453,32 @@ app.directive("boardBlock", ["$rootScope", "$timeout", "context", function($root
 
 
             var textarea = element[0].children[2];
+
+            // https://stackoverflow.com/questions/6140632/how-to-handle-tab-in-textarea
+            // Todo: do handling of Enter (code 13) to place appropriate offset on the next line
+
+            textarea.addEventListener('keydown',function(e) {
+                if(e.keyCode === 9) { // tab was pressed
+                    // get caret position/selection
+                    var start = this.selectionStart;
+                    var end = this.selectionEnd;
+
+                    var target = e.target;
+                    var value = target.value;
+
+                    // set textarea value to: text before caret + tab + text after caret
+                    target.value = value.substring(0, start)
+                        + "  " // two spaces instead or tab symbol: // "\t"
+                        + value.substring(end);
+
+                    // put caret at right position again (add one for the tab)
+                    this.selectionStart = this.selectionEnd = start + 2; // originally + 1
+
+                    // prevent the focus lose
+                    e.preventDefault();
+                }
+            },false);
+
             scope.expandTextarea= function() {
 
                 function getBounds(text) {
