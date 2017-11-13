@@ -16,6 +16,32 @@ const fse = require('fs-extra');
 
 
 
+var searchFilesDeeply = function(dir, done) {
+    var results = [];
+    fs.readdir(dir, function(err, list) {
+        if (err) return done(err);
+        var i = 0;
+        (function next() {
+            var file = list[i++];
+            if (!file) return done(null, results);
+            file = dir + '/' + file;
+            fs.stat(file, function(err, stat) {
+                if (stat && stat.isDirectory()) {
+                    searchFilesDeeply(file, function(err, res) {
+                        results = results.concat(res);
+                        next();
+                    });
+                } else {
+                    results.push(file);
+                    next();
+                }
+            });
+        })();
+    });
+};
+
+
+
 function checkAphsInitiated() {
     if (!fs.existsSync(JSONPath)) {
         fse.copySync(defaultJSONPath, JSONPath);
@@ -38,15 +64,17 @@ function saveJSON(json) {
 
 function updateProjectBlocks(){
     var json = getJSON();
-    json.blocks = getBlocks();
-    saveJSON(json);
+    getBlocks(function(theBlocks){
+        json.blocks = theBlocks;
+        saveJSON(json);
+    });
 }
 
 
 
 
 function parseFile(filename) {
-    var code = fs.readFileSync(srcPath+"/"+filename, "utf8");
+    var code = fs.readFileSync(filename, "utf8");
     var regExp = new RegExp(/\/\*-(.+?)-\*\//, 'gim');
     var array = code.match(regExp);
     var toReturn = [];
@@ -67,12 +95,33 @@ function parseFile(filename) {
 
 
 
-function getBlocks() {
+// Callback just because it will take long
+// to make searchFilesDeeply sync (now async)
+function getBlocks(callback) {
     var blocks = [];
+
+    /*
     fs.readdirSync(srcPath).forEach(function(filename){
-        blocks = blocks.concat(parseFile(filename));
+
+        // correct later to work
+        // on different folder levels
+        // with recursive search like here:
+        // https://stackoverflow.com/questions/5827612/node-js-fs-readdir-recursive-directory-search
+        // >
+        if (!fs.lstatSync(srcPath+"/"+filename).isDirectory()){
+            blocks = blocks.concat(parseFile(filename));
+        }
     });
-    return blocks;
+    */
+
+    searchFilesDeeply(srcPath, function(error, paths){
+        paths.forEach(function(path){
+            blocks = blocks.concat(parseFile(path));
+        });
+        callback (blocks);
+    });
+
+    // return blocks;
 }
 
 
