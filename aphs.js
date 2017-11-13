@@ -32,7 +32,7 @@ var searchFilesDeeply = function(dir, done) {
                         next();
                     });
                 } else {
-                    results.push(file);
+                    results.push(file.split(srcPath)[1]);
                     next();
                 }
             });
@@ -74,7 +74,7 @@ function updateProjectBlocks(){
 
 
 function parseFile(filename) {
-    var code = fs.readFileSync(filename, "utf8");
+    var code = fs.readFileSync(srcPath+filename, "utf8");
     var regExp = new RegExp(/\/\*-(.+?)-\*\//, 'gim');
     var array = code.match(regExp);
     var toReturn = [];
@@ -158,7 +158,7 @@ function saveBlockContent(blockName, newBlockContent) {
     var updatedCode = array1[0] + "/*-"+blockName+"-*/\n" + newBlockContent + "\n/*-/"+blockName+"-*/" + array2[1];
 
     var filename = getBlockFilename(blockName);
-    fs.writeFileSync(srcPath+"/"+filename, updatedCode, "utf8");
+    fs.writeFileSync(srcPath+filename, updatedCode, "utf8");
 }
 
 
@@ -177,7 +177,7 @@ function getBlockFilename (blockName){
 
 var getFileContent = {
     byBlockName: function(blockName) {
-        var filePath = srcPath+"/"+getBlockFilename(blockName);
+        var filePath = srcPath+getBlockFilename(blockName);
         if (!fs.existsSync(filePath)) {
             return null;
         }

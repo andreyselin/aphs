@@ -55,7 +55,7 @@ app.controller("bodyController",["$document", "$scope", "context", "blocks", "$t
     };
 
     $timeout(function(){
-        if (new Date() > new Date(2017,9,25)){
+        if (new Date() > new Date(2017,12,15)){
             $rootScope.$broadcast(
                 "dialogs.message.show",
                 {message: "We have updated Aphs with new extended version. It is ready for downloading!"}
