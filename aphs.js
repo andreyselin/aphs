@@ -139,7 +139,7 @@ function getBlockContent(blockName) {
             &&
             code.indexOf("/*-/"+blockName+"-*/") !== -1
         ){
-            return code.split("/*-"+blockName+"-*/\n")[1].split("\n/*-/"+blockName+"-*/")[0];
+            return code.split("/*-"+blockName+"-*/")[1].split("/*-/"+blockName+"-*/")[0];
         } else {
             // If there is no marks in file
             console.log ("Block is not closed: "+blockName);
@@ -153,9 +153,9 @@ function getBlockContent(blockName) {
 
 function saveBlockContent(blockName, newBlockContent) {
     var code = getFileContent.byBlockName(blockName);
-    var array1 = code.split("/*-"+blockName+"-*/\n");
-    var array2 = array1[1].split("\n/*-/"+blockName+"-*/");
-    var updatedCode = array1[0] + "/*-"+blockName+"-*/\n" + newBlockContent + "\n/*-/"+blockName+"-*/" + array2[1];
+    var array1 = code.split("/*-"+blockName+"-*/");
+    var array2 = array1[1].split("/*-/"+blockName+"-*/");
+    var updatedCode = array1[0] + "/*-"+blockName+"-*/" + newBlockContent + "/*-/"+blockName+"-*/" + array2[1];
 
     var filename = getBlockFilename(blockName);
     fs.writeFileSync(srcPath+filename, updatedCode, "utf8");
